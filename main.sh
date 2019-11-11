@@ -1,10 +1,10 @@
-!/bin/bash
+#!/bin/bash
 
 #searches for todo items and prints them in order
 function list_todo(){
 	counter=1
-	filenames=$(find ~/todo -name '*')
-	if [ $filenames == "*"]; then
+	if [ -f ./todo ]; then
+		filenames=$(find ~/todo -name '*')
 		for filename in $filenames; do
 			line=$(head -n 1 $filename)
 			echo "$counter) $line"
