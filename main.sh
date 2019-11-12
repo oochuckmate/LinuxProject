@@ -41,7 +41,7 @@ function mark_complete(){
 		echo "Marking file $n as complete! Returning to menu..."
 		complete_filenames=$(find ./todo_completed/* -name '*')
 		for complete_filename in $complete_filenames; do	
-			complete_counter=$((counter+1))
+			complete_counter=$((complete_counter+1))
 		done
 		mv ./todo/$n ./todo_completed/$complete_counter
 		main
@@ -53,7 +53,15 @@ function mark_complete(){
 
 #add a file to todo directory
 function add(){
-	echo "add"
+	counter=$((counter+1))
+	echo "To add an item I will need a title and description."
+	read -p "Title: " title
+	read -p "Description: " description
+	echo "$title
+-----
+$description" > ./todo/$counter
+	echo "File added to list! Returning to menu..."
+	main
 }
 
 #searches todo_completed items and prints them in order
