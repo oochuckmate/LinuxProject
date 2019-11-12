@@ -37,6 +37,7 @@ function mark_complete(){
 	echo
 	complete_counter=1
 	if [ -e ./todo/1 ]; then
+		list_todo
 		echo "What file would you like to mark as complete?"
 		read -p "Enter number: " n
 		echo
