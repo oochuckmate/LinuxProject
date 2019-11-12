@@ -2,28 +2,53 @@
 
 #searches for todo items and prints them in order
 function list_todo(){
+	echo "Here are your current items:"
 	counter=0
-	if [ -f ./todo ]; then
-		filenames=$(find ~/todo -name '*')
-		for filename in $filenames; do
+	if [ -e ./todo/1 ]; then
+		filenames=$(find ./todo/* -name '*')
+		for filename in $filenames; do	
+			counter=$((counter+1))
 			line=$(head -n 1 $filename)
 			echo "	$counter) $line"
-			counter=$((counter+1))
 		done
-		counter=$((counter+1))
 	else
 		echo "	Nothing at all!"
 	fi
 }
 
-#print the rest of the file
+#checks for invalid choices and if valid will print full file given
 function detail(){
-	echo "detail"
+	if [ -e ./todo/$1 ]; then
+		echo "Here is the full item: "
+		echo
+		file=$(find ./todo/* -name $1)
+		cat $file
+		echo
+		echo "Returning to menu..."
+		main
+	else
+		echo "Invalid choice given! Returning to menu..."
+		main
+	fi
 }
 
 #mark a file as completed (move a file to todo_completed directory)
 function mark_complete(){
-	echo "mark_complete"
+	complete_counter=1
+	if [ -e ./todo/1 ]; then
+		echo "What file would you like to mark as complete?"
+		read -p "Enter number: " n
+		echo "Marking file $n as complete! Returning to menu..."
+		complete_filenames=$(find ./todo_completed/* -name '*')
+		for complete_filename in $complete_filenames; do	
+			complete_counter=$((counter+1))
+		done
+		mv ./todo/$n ./todo_completed/$complete_counter
+		main
+	else
+		echo "No item found! Returning to menu..."
+		main
+	fi
 }
 
 #add a file to todo directory
@@ -39,7 +64,6 @@ function list_todo_completed(){
 #main menu that repeats until quit
 function main(){
 	echo
-	echo "Here are your current items:"
 	list_todo
 	echo "What would you like to do?"
 	if [ $counter -eq 0 ]; then
@@ -57,20 +81,19 @@ function main(){
 	Q) Quit"
 	fi
 	read -p "Enter choice: " choice
-	if [ $choice == 'A' ]; then
+	if [ $choice == 'A' ] || [ $choice == 'a' ]; then
 		mark_complete
 		main
-	elif [ $choice == 'B' ]; then
+	elif [ $choice == 'B' ] || [ $choice == 'b' ]; then
 		add
 		main
-	elif [ $choice == 'C' ]; then
+	elif [ $choice == 'C' ] || [ $choice == 'c' ]; then
 		list_todo_completed
 		main
-	elif [ $choice == 'Q' ]; then
+	elif [ $choice == 'Q' ] || [ $choice == 'q' ]; then
 		exit 0
 	else
-		echo "Not a valid choice! Let's try again..."
-		main
+		detail $choice
 	fi
 }
 
