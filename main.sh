@@ -18,6 +18,7 @@ function list_todo(){
 
 #checks for invalid choices and if valid will print full file given
 function detail(){
+	echo
 	if [ -e ./todo/$1 ]; then
 		echo "Here is the full item: "
 		echo
@@ -25,34 +26,41 @@ function detail(){
 		cat $file
 		echo
 		echo "Returning to menu..."
-		main
 	else
 		echo "Invalid choice given! Returning to menu..."
-		main
 	fi
+	main
 }
 
 #mark a file as completed (move a file to todo_completed directory)
 function mark_complete(){
+	echo
 	complete_counter=1
 	if [ -e ./todo/1 ]; then
 		echo "What file would you like to mark as complete?"
 		read -p "Enter number: " n
-		echo "Marking file $n as complete! Returning to menu..."
-		complete_filenames=$(find ./todo_completed/* -name '*')
-		for complete_filename in $complete_filenames; do	
-			complete_counter=$((complete_counter+1))
-		done
-		mv ./todo/$n ./todo_completed/$complete_counter
-		main
+		echo
+		if [ -e ./todo/$n ]; then
+			echo "Marking file $n as complete! Returning to menu..."
+			if [ -e ./todo_completed/1 ]; then
+				complete_filenames=$(find ./todo_completed/* -name '*')
+				for complete_filename in $complete_filenames; do	
+					complete_counter=$((complete_counter+1))
+				done
+			fi
+			mv ./todo/$n ./todo_completed/$complete_counter
+		else
+			echo "That's not an item! Returning to menu..."
+		fi
 	else
-		echo "No item found! Returning to menu..."
-		main
+		echo "No items found! Returning to menu..."
 	fi
+	main
 }
 
 #add a file to todo directory
 function add(){
+	echo
 	counter=$((counter+1))
 	echo "To add an item I will need a title and description."
 	read -p "Title: " title
@@ -60,13 +68,27 @@ function add(){
 	echo "$title
 -----
 $description" > ./todo/$counter
+	chmod 600 ./todo/$counter
 	echo "File added to list! Returning to menu..."
 	main
 }
 
 #searches todo_completed items and prints them in order
 function list_todo_completed(){
-	echo "list_todo_completed"
+	echo
+	echo "Here are your completed items:"
+	completed=0
+	if [ -e ./todo_completed/1 ]; then
+		completed_files=$(find ./todo_completed/* -name '*')
+		for filename in $completed_files; do	
+			completed=$((completed+1))
+			head=$(head -n 1 $filename)
+			echo "	$completed) $head"
+		done
+	else
+		echo "	Nothing has been completed! Returning to menu..."
+	fi
+	main
 }
 
 #main menu that repeats until quit
